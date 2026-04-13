@@ -1,0 +1,12 @@
+FROM node:18-alpine
+WORKDIR /usr/src/app
+
+# copia seus arquivos para dentro do container
+COPY . .
+
+# instala as bibliotecas que o seu server.js precisa
+RUN npm install express sqlite3 sqlite @influxdata/influxdb-client cors node-cron dotenv
+
+# libera a porta e roda o servidor
+EXPOSE 8080
+CMD ["node", "server.js"]
