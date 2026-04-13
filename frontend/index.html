@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Rack de Servidores- Projeto IoT</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a; 
+            color: #e0e0e0; 
+            display: flex; 
+            justify-content: center; 
+            padding: 40px 20px; 
+            margin: 0;
+        }
+        .card { 
+            background: #121212; 
+            border: 1px solid #2a2a2a;
+            border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            width: 100%; 
+            max-width: 900px; 
+            padding: 30px 40px; 
+        }
+        h1 { 
+            color: #ffffff; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 15px; 
+            font-weight: 600; /* Deixei o título um pouco mais grosso para destacar a Poppins */
+            letter-spacing: 1px;
+            margin-top: 0;
+        }
+        p { 
+            color: #888; 
+            font-size: 14px;
+            font-weight: 300;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 25px; 
+        }
+        th { 
+            background: #000000; 
+            color: #ffffff; 
+            padding: 15px 12px; 
+            text-align: left; 
+            border-bottom: 2px solid #ffffff;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        td { 
+            padding: 15px 12px; 
+            border-bottom: 1px solid #222; 
+            font-size: 14px;
+            font-weight: 400;
+        }
+        tr:hover td {
+            background: #16161c;
+            color: #d1c4e9; 
+            transition: all 0.3s ease;
+        }
+        .status-badge { 
+            padding: 6px 12px; 
+            border-radius: 3px; 
+            font-weight: 700; 
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .alerta { 
+            background: #ffffff; 
+            color: #000000; 
+        }
+        .normal { 
+            background: transparent; 
+            color: #888; 
+            border: 1px solid #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Consolidação de Dados: RACK-01</h1>
+        <p>Dados processados (médias de 5 min) vindos do SQLite na AWS.</p>
+        <table id="tabela">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Sensor</th>
+                    <th>Média Temp.</th>
+                    <th>Data/Hora</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const IP_AWS = "98.81.139.246"; 
+
+        async function buscarDados() {
+            try {
+                const res = await fetch(`http://${IP_AWS}:8080/api/medias`);
+                const dados = await res.json();
+                const corpoTabela = document.querySelector("#tabela tbody");
+                corpoTabela.innerHTML = "";
+
+                dados.forEach(item => {
+                    const statusClass = item.media_temperatura > 28 ? "alerta" : "normal";
+                    const statusTexto = item.media_temperatura > 28 ? "CRÍTICO" : "ESTÁVEL";
+                    
+                    corpoTabela.innerHTML += `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td>${item.rack_id}</td>
+                            <td>${item.media_temperatura}°C</td>
+                            <td>${new Date(item.data_registro).toLocaleString('pt-BR')}</td>
+                            <td><span class="status-badge ${statusClass}">${statusTexto}</span></td>
+                        </tr>
+                    `;
+                });
+            } catch (e) { console.error("Erro ao buscar dados", e); }
+        }
+        
+        buscarDados();
+        setInterval(buscarDados, 30000); // Atualiza a cada 30 segundos
+    </script>
+</body>
+</html>
