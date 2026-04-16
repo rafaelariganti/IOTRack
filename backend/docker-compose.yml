@@ -13,7 +13,7 @@ services:
       - mosquitto_log:/mosquitto/log
     restart: unless-stopped
 
-  #Node-RED (Ajustado para a porta 80 para evitar bloqueios na faculdade)
+  #Node-RED 
   nodered:
     image: nodered/node-red:latest
     container_name: node_red
@@ -61,6 +61,16 @@ services:
       - backend_data:/usr/src/app
     depends_on:
       - influxdb
+    restart: unless-stopped
+
+  #Frontend Nginx
+  frontend:
+    image: nginx:alpine
+    container_name: rack_frontend
+    ports:
+      - "8000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
     restart: unless-stopped
 
 volumes:
