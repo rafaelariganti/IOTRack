@@ -6,7 +6,7 @@ Repositório destinado à entrega do projeto prático da disciplina de **Program
 
 ## 📺 Vídeo de Apresentação (Pitch)
 > **Clique no link abaixo para assistir à demonstração completa da solução:**
-> ### 🔗 [ASSISTIR VÍDEO NO YOUTUBE](COLOQUE_O_LINK_AQUI)
+> ### 🔗 [ASSISTIR VÍDEO NO YOUTUBE](https://youtu.be/u7eCPDVRQMs)
 
 ---
 
